@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artify Gallery</title>
+  <style>
+    /* Root colors */
+    :root {
+      --aqua-light: #e0f7fa;
+      --aqua-dark: #006064;
+      --teal-900: #004d40;
+      --teal-200: #80cbc4;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-dark: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Global styles */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--aqua-light);
+      color: var(--teal-900);
+      transition: background-color 0.5s, color 0.5s;
+    }
+
+    body.dark {
+      background-color: var(--aqua-dark);
+      color: var(--teal-200);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Navbar */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: var(--aqua-light);
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: background-color 0.5s, box-shadow 0.5s;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    body.dark nav {
+      background-color: var(--aqua-dark);
+      box-shadow: 0 2px 8px var(--shadow-dark);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    nav ul li {
+      cursor: pointer;
+      font-weight: 500;
+      transition: transform 0.2s;
+    }
+
+    nav ul li:hover {
+      transform: scale(1.1);
+    }
+
+    nav button {
+      padding: 0.5rem 1rem;
+      background-color: var(--teal-200);
+      color: var(--teal-900);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    nav button:hover {
+      transform: scale(1.05);
+      opacity: 0.85;
+    }
+
+    body.dark nav button {
+      background-color: var(--teal-900);
+      color: var(--teal-200);
+    }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .card {
+      background-color: var(--aqua-light);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 12px var(--shadow-light);
+      transition: transform 0.3s, background-color 0.5s, box-shadow 0.3s;
+    }
+
+    body.dark .card {
+      background-color: var(--aqua-dark);
+      box-shadow: 0 4px 12px var(--shadow-dark);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .card img:hover {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: 1rem 1rem 1.5rem 1rem;
+    }
+
+    .card-content h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.2rem;
+    }
+
+    .card-content p {
+      margin: 0 0 1rem 0;
+      font-weight: 500;
+    }
+
+    .card-content button {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: var(--teal-200);
+      color: var(--teal-900);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .card-content button:hover {
+      transform: scale(1.05);
+      opacity: 0.85;
+    }
+
+    body.dark .card-content button {
+      background-color: var(--teal-900);
+      color: var(--teal-200);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      nav ul {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">🎨 Artify</div>
+    <ul>
+      <li>Home</li>
+      <li>Gallery</li>
+      <li>Contact</li>
+      <li>Log In</li>
+      <li>Cart (<span id="cart-count">0</span>)</li>
+    </ul>
+    <button id="toggle-theme">🌙</button>
+  </nav>
+
+  <!-- Gallery -->
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    // Painting data
+    const paintings = [
+      { id: 1, title: 'Sunset Bliss', price: 120, image: 'https://via.placeholder.com/400x300?text=Sunset+Bliss' },
+      { id: 2, title: 'Ocean Dreams', price: 150, image: 'https://via.placeholder.com/400x300?text=Ocean+Dreams' },
+      { id: 3, title: 'Abstract Flow', price: 200, image: 'https://via.placeholder.com/400x300?text=Abstract+Flow' },
+      { id: 4, title: 'Mountain Majesty', price: 180, image: 'https://via.placeholder.com/400x300?text=Mountain+Majesty' },
+      { id: 5, title: 'Color Splash', price: 220, image: 'https://via.placeholder.com/400x300?text=Color+Splash' },
+      { id: 6, title: 'Calm Forest', price: 140, image: 'https://via.placeholder.com/400x300?text=Calm+Forest' },
+    ];
+
+    const gallery = document.getElementById('gallery');
+    const cartCount = document.getElementById('cart-count');
+    let cart = [];
+
+    // Populate gallery
+    paintings.forEach(painting => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src="${painting.image}" alt="${painting.title}">
+        <div class="card-content">
+          <h2>${painting.title}</h2>
+          <p>$${painting.price}</p>
+          <button>Add to Cart</button>
+        </div>
+      `;
+      const button = card.querySelector('button');
+      button.addEventListener('click', () => {
+        cart.push(painting);
+        cartCount.textContent = cart.length;
+        alert(`${painting.title} added to cart!`);
+      });
+      gallery.appendChild(card);
+    });
+
+    // Dark/Light toggle
+    const toggleButton = document.getElementById('toggle-theme');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      toggleButton.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+  </script>
+</body>
+</html>
